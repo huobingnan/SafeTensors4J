@@ -1,0 +1,3 @@
+# SafeTensors4J
+
+SafeTensors是HuggingFace官方推出的一种神经网络模型的保存格式，SafeTensors4J主要提供了对这种格式的解析和编码支持。
