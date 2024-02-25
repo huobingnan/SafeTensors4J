@@ -8,10 +8,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * SafeTensors格式文件解析器
@@ -34,6 +32,8 @@ public class SafeTensorsDecoder {
             final byte[] headerJsonBytes = fis.readNBytes((int)headerSize);
             final JSONObject headerJson = JSON.parseObject(headerJsonBytes);
             final SafeTensors safeTensors = new SafeTensors();
+            safeTensors.setFilename(Paths.get(filename).toFile().getAbsolutePath());
+            safeTensors.setSizeOfHeader(headerSize);
             final List<SafeTensors.HeaderElement> elements = new ArrayList<>((int)headerSize);
             for (final String name : headerJson.keySet()) {
                 if ("__metadata__".equals(name)) {
@@ -44,12 +44,13 @@ public class SafeTensorsDecoder {
                 final SafeTensors.HeaderElement element = new SafeTensors.HeaderElement();
                 final JSONObject header = headerJson.getJSONObject(name);
                 final String dataType = header.getString("dtype");
-                final List<Integer> shape = header.getList("shape", Integer.class);
-                final List<Integer> offsets = header.getList("offsets", Integer.class);
+                final List<Long> shape = header.getList("shape", Long.class);
+                final List<Long> offsets = header.getList("data_offsets", Long.class);
                 element.setName(name);
                 element.setDataType(SafeTensors.DataType.valueOf(dataType));
                 element.setShape(shape);
                 element.setOffsets(offsets);
+                elements.add(element);
             }
             safeTensors.setHeader(elements);
             return safeTensors;

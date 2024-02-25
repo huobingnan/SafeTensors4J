@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -23,11 +24,12 @@ public class SafeTensors {
     public static class HeaderElement {
         private String name;
         private DataType dataType;
-        private List<Integer> shape;
-        private List<Integer> offsets;
+        private List<Long> shape;
+        private List<Long> offsets;
     }
 
+    private long sizeOfHeader;
     private List<HeaderElement> header;
     private Map<String, String> metadata;
-
+    private String filename;
 }
